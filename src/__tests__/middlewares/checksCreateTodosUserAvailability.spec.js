@@ -42,7 +42,7 @@ describe('checksCreateTodosUserAvailability', () => {
     mockNext = jest.fn();
   });
 
-  it('should be able to let user create a new todo when is in free plan and have less than ten todos', () => {
+  it('should be able to let user create a new todo when is in free plan and has less than ten todos', () => {
     const mockRequest = request({
       user: {
         id: v4(),
@@ -60,7 +60,7 @@ describe('checksCreateTodosUserAvailability', () => {
     expect(mockNext).toBeCalled();
   });
 
-  it('should not be able to let user create a new todo when is not Pro and already have ten todos', () => {
+  it('should not be able to let user create a new todo when is not Pro and already has ten todos', () => {
     const mockRequest = request({
       user: {
         id: v4(),

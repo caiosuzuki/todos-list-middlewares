@@ -67,7 +67,7 @@ describe('findUserById', () => {
     expect(mockNext).toBeCalled();
   });
 
-  it('should not be able to pass user to request.user when it does not exists', () => {
+  it('should not be able to pass user to request.user when it does not exist', () => {
     const mockRequest = request({ params: { id: v4() } });
     const mockUserSetter = jest.fn((userData) => { this.user = userData });
     mockRequest.__defineSetter__('user', mockUserSetter);

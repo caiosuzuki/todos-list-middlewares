@@ -9,20 +9,58 @@ app.use(cors());
 
 const users = [];
 
+function respondWithError(response, status, message) {
+  return response.status(status).json({ error: message });
+}
+
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+  const user = users.find((user => user.username === username));
+  if (!user) {
+    return respondWithError(response, 404, 'User not found.');
+  }
+  request.user = user;
+  return next();
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+  if (!user.pro && user.todos.length === 10) {
+    return respondWithError(response, 403, 'User reached maximum todos available for free plan.');
+  }
+  return next();
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+  const user = users.find((user => user.username === username));
+  if (!user) {
+    return respondWithError(response, 404, 'User not found.');
+  }
+
+  const { id } = request.params;
+  if (!validate(id)) {
+    respondWithError(response, 400, 'Id is in invalid format, must be UUID.');
+  }
+
+  const todoToCheck = user.todos.find((todo) => todo.id === id);
+  if (!todoToCheck) {
+    return respondWithError(response, 404, 'Todo not found.');
+  }
+  request.user = user;
+  request.todo = todoToCheck;
+
+  return next();
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+  let user = users.find((user) => user.id === id);
+  if (!user) {
+    return respondWithError(response, 404, 'User not found.');
+  }
+  request.user = user;
+  return next();
 }
 
 app.post('/users', (request, response) => {
@@ -91,6 +129,7 @@ app.post('/todos', checksExistsUserAccount, checksCreateTodosUserAvailability, (
 app.put('/todos/:id', checksTodoExists, (request, response) => {
   const { title, deadline } = request.body;
   const { todo } = request;
+  console.log('>>>>>>', todo)
 
   todo.title = title;
   todo.deadline = new Date(deadline);
